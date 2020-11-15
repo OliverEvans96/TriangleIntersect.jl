@@ -30,7 +30,7 @@ struct IntersectableTriangle
     end
 end
 
-convert(::Type{IntersectableTriangle}, t::Triangle) = IntersectableTriangle(decompose(Point, t)...)
+convert(::Type{IntersectableTriangle}, t::Triangle{D}) = IntersectableTriangle(decompose(Point, t)...)
 
 struct Ray
     origin::Point{D}
