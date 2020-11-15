@@ -19,13 +19,13 @@ struct IntersectableTriangle
     v1v2::Float64
     denom::Float64
     function IntersectableTriangle(a::Point{D}, b::Point{D}, c::Point{D})
-        v1 = b-a
-        v2 = c-a
+        v1 = b - a
+        v2 = c - a
         normal = cross(v1, v2)
         v1v1 = dot(v1, v1)
         v2v2 = dot(v2, v2)
         v1v2 = dot(v1, v2)
-        denom = v1v2*v1v2 - v1v1*v2v2
+        denom = v1v2 * v1v2 - v1v1 * v2v2
         new(a, v1, v2, normal, v1v1, v2v2, v1v2, denom)
     end
 end
@@ -35,7 +35,7 @@ convert(::Type{IntersectableTriangle}, t::Triangle) = IntersectableTriangle(deco
 struct Ray
     origin::Point{D}
     direction::Vec{D}
-    Ray(a,b) = new(a,normalize(b))
+    Ray(a, b) = new(a, normalize(b))
 end
 
 struct Intersection
@@ -44,7 +44,7 @@ struct Intersection
     is_intersection::Bool
 end
 
-const no_intersection = Intersection(Point(0,0,0), 0.0, false)
+const no_intersection = Intersection(Point(0, 0, 0), 0.0, false)
 
 function intersect(r::Ray, t::IntersectableTriangle)
     denom = dot(t.normal, r.direction)
@@ -55,14 +55,14 @@ function intersect(r::Ray, t::IntersectableTriangle)
     w = plane_intersection - t.a
     wv1 = dot(w, t.v1)
     wv2 = dot(w, t.v2)
-    s_intersection = (t.v1v2*wv2 - t.v2v2*wv1) / t.denom
+    s_intersection = (t.v1v2 * wv2 - t.v2v2 * wv1) / t.denom
     s_intersection <= 0 && return no_intersection
     s_intersection >= 1 && return no_intersection
-    t_intersection = (t.v1v2*wv1 - t.v1v1*wv2) / t.denom
+    t_intersection = (t.v1v2 * wv1 - t.v1v1 * wv2) / t.denom
     t_intersection <= 0 && return no_intersection
     t_intersection >= 1 && return no_intersection
     s_intersection + t_intersection >= 1 && return no_intersection
-    Intersection(t.a + s_intersection*t.v1+t_intersection*t.v2, ri, true)
+    Intersection(t.a + s_intersection * t.v1 + t_intersection * t.v2, ri, true)
 end
 
 intersect(r::Ray, t::Triangle{D}) = intersect(r, convert(IntersectableTriangle, t))
