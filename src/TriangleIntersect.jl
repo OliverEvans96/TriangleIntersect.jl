@@ -2,9 +2,11 @@ module TriangleIntersect
 
 import Base: convert, intersect
 using LinearAlgebra: cross, dot, norm, normalize
-using GeometryBasics: Point, Vec, Triangle, decompose
+using GeometryBasics: AbstractPoint, Ngon, Point, Vec, Triangle, decompose
 
 export IntersectableTriangle, Ray, Intersection, no_intersection
+
+const AbstractTriangle{D} = Ngon{D, <:Number, 3, <:AbstractPoint{D}}
 
 # 3 dimensions
 const D = 3;
@@ -30,7 +32,7 @@ struct IntersectableTriangle
     end
 end
 
-convert(::Type{IntersectableTriangle}, t::Triangle{D}) = IntersectableTriangle(decompose(Point, t)...)
+convert(::Type{IntersectableTriangle}, t::AbstractTriangle{D}) = IntersectableTriangle(decompose(Point, t)...)
 
 struct Ray
     origin::Point{D}
@@ -65,6 +67,6 @@ function intersect(r::Ray, t::IntersectableTriangle)
     Intersection(t.a + s_intersection * t.v1 + t_intersection * t.v2, ri, true)
 end
 
-intersect(r::Ray, t::Triangle{D}) = intersect(r, convert(IntersectableTriangle, t))
+intersect(r::Ray, t::AbstractTriangle{D}) = intersect(r, convert(IntersectableTriangle, t))
 
 end # module
